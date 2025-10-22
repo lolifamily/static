@@ -1,0 +1,42 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 'lts/*'
+          package-manager-cache: false
+
+      - name: Get pnpm store path
+        run: echo PNPM_STORE_PATH=$(pnpm store path --silent) >> "$GITHUB_ENV"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: pnpm-cache-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: pnpm-cache-${{ runner.os }}-${{ runner.arch }}-
+   
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        id: typecheck
+        run: pnpm typecheck
+        continue-on-error: true
+
+      - name: ESLint
+        id: lint
+        run: pnpm lint
+        continue-on-error: true
+
+      - name: Check results
+        if: steps.lint.outcome != 'success' || steps.typecheck.outcome != 'success'
+        run: exit 1

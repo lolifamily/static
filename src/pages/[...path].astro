@@ -1,0 +1,181 @@
+---
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { ClientRouter } from 'astro:transitions';
+import { base } from 'astro:config/server';
+import { posix as path } from 'node:path';
+import { formatBytes, formatDateTime } from '@/utils/format';
+
+export async function getStaticPaths() {
+  const allDirs = await getCollection('files');
+
+  return allDirs.map(dir => ({
+    params: { path: dir.id },
+    props: { items: dir.data.children },
+  }));
+}
+
+// Two-path design for base compatibility:
+//
+// routePath: Internal path without base (from Astro route params)
+//   - Used for content collection queries (e.g., getEntry('docs', routePath))
+//   - Examples: '' (root), 'foo', 'foo/bar'
+//   - Content IDs don't include base prefix
+//
+// currentPath: External path with base (for URLs and display)
+//   - Used for HTML links and breadcrumbs
+//   - Examples with base='/': '/', '/foo', '/foo/bar'
+//   - Examples with base='/files/': '/files/', '/files/foo', '/files/foo/bar'
+//   - This ensures links work correctly when base changes
+const routePath = Astro.params.path ?? '';
+const currentPath = path.join(base, routePath);
+
+interface Props {
+  items: CollectionEntry<'files'>['data']['children'];
+};
+
+const { items } = Astro.props;
+
+// For docs lookup: fetch and render header/footer in parallel
+// Use routePath (without base) for content collection lookup
+const [header, footer] = await Promise.all([
+  getEntry('docs', path.join(routePath, 'header')),
+  getEntry('docs', path.join(routePath, 'footer')),
+]);
+
+const [headerRendered, footerRendered] = await Promise.all([
+  header?.render(),
+  footer?.render(),
+]);
+
+const HeaderContent = headerRendered?.Content;
+const FooterContent = footerRendered?.Content;
+
+// Breadcrumb design: mirror the actual URL path 1:1
+//
+// WHY: The browser address bar is the source of truth. Users see a URL like
+//      /files/foo/bar, so breadcrumbs should show exactly that structure.
+//
+// WHY use currentPath (with base) instead of routePath (without base)?
+//   - URL IS: /files/foo/bar (this is what user sees in address bar)
+//   - routePath is: foo/bar (internal Astro routing detail)
+//   - Breadcrumbs should match the URL, not internal routing
+//
+// Example 1: base='/' (app at site root)
+//   URL: /charliez0/images
+//   Breadcrumbs: / > charliez0 > images
+//   All segments correspond to actual URL paths
+//
+// Example 2: base='/files/' (app mounted at /files/)
+//   URL: /files/charliez0/images
+//   Breadcrumbs: / > files > charliez0 > images
+//   The 'files' segment IS part of the URL, so it appears in breadcrumbs
+//   Clicking 'files' navigates to /files/ (app root)
+//
+// Example 3: base='/my/deep/path/' (app deeply nested)
+//   URL: /my/deep/path/foo/bar
+//   Breadcrumbs: / > my > deep > path > foo > bar
+//   All URL segments (including base) are clickable
+//
+// Root link behavior: Hardcoded to '/' (not base)
+//   WHY: Allows users to navigate up to site root, potentially exiting the app.
+//   This mirrors nginx autoindex behavior: root is always '/', regardless of location.
+const pathSegments = currentPath.split('/').filter(Boolean);
+
+const breadcrumbs = pathSegments.map((part, i) => ({
+  name: part,
+  path: '/' + pathSegments.slice(0, i + 1).join('/'),
+}));
+
+import '@/styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Index of
+      {currentPath}
+    </title>
+
+    <ClientRouter />
+  </head>
+  <body>
+    <div class="container">
+      {HeaderContent && (
+        <div class="markdown-body markdown-header">
+          <HeaderContent />
+        </div>
+      )}
+
+      <div class="breadcrumb">
+        <a href="/">/</a>
+        {breadcrumbs.map((crumb, i) => (
+          <>
+            <a href={crumb.path}>{crumb.name}</a>
+            {i < breadcrumbs.length - 1 && <span> / </span>}
+          </>
+        ))}
+      </div>
+
+      <h1 class="index-header">
+        Index of
+        {currentPath}
+      </h1>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th class="size">Size</th>
+            <th class="date">Last Modified</th>
+          </tr>
+        </thead>
+        <tbody>
+          {breadcrumbs.length > 0 && (
+            <tr>
+              <td>
+                <span class="icon">⬆️</span>
+                {/* Parent Directory: Show whenever not at site root '/'
+                    This mirrors nginx autoindex behavior: even at the app's logical root
+                    (e.g., /files/ when base='/files/'), users can navigate up to site root.
+
+                    Examples:
+                    - At /files/foo: parent is /files (breadcrumbs.at(-2).path)
+                    - At /files/: parent is / (breadcrumbs.at(-2) is undefined, fallback to '/')
+                    - At /: this row is hidden (currentPath === '/' condition)
+
+                    This is intentional: allows exiting the app by navigating upward. */}
+                <a href={breadcrumbs.at(-2)?.path ?? '/'}>Parent Directory</a>
+              </td>
+              <td class="placeholder">-</td>
+              <td class="placeholder">-</td>
+            </tr>
+          )}
+
+          {items.map(item => (
+            <tr>
+              <td>
+                <span class="icon">
+                  {item.kind === 'directory' ? '📁' : '📄'}
+                </span>
+                <a href={path.join(currentPath, item.name)}>
+                  {item.name + (item.kind === 'directory' ? '/' : '')}
+                </a>
+              </td>
+              <td class="size">{formatBytes(item.size)}</td>
+              <td class="date">{formatDateTime(item.modified)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {FooterContent && (
+        <div class="markdown-body markdown-footer">
+          <FooterContent />
+        </div>
+      )}
+    </div>
+  </body>
+</html>

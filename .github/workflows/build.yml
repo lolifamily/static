@@ -1,0 +1,68 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 'lts/*'
+          package-manager-cache: false
+
+      # 手动管理 pnpm store 缓存以启用增量复用
+      # setup-node 的 package-manager-cache 不支持 restore-keys，
+      # 导致依赖更新时 cache key 变化，必须全部重新下载。
+      # 使用 restore-keys 可以复用旧缓存，pnpm 只需增量下载变更的包。
+      - name: Get pnpm store path
+        run: echo PNPM_STORE_PATH=$(pnpm store path --silent) >> "$GITHUB_ENV"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.PNPM_STORE_PATH }}
+          key: pnpm-cache-production-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: pnpm-cache-production-${{ runner.os }}-${{ runner.arch }}-
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .astro
+            .cache
+          key: astro-build-${{ github.sha }}
+          restore-keys: astro-build-
+
+      - run: pnpm install --frozen-lockfile --production
+      - run: pnpm build
+
+      - name: Deploy to Cloudflare Workers
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        id: cloudflare_workers
+        run: pnpm online:workers
+        continue-on-error: true
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        id: cloudflare_pages
+        run: pnpm online:pages
+        continue-on-error: true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Exit with error if any step failed
+        if: |
+          steps.cloudflare_workers.outcome != 'success' || steps.cloudflare_pages.outcome != 'success'
+        run: exit 1

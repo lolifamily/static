@@ -1,0 +1,12 @@
+{
+  "$schema": "https://cdn.jsdelivr.net/npm/wrangler/config-schema.json",
+  "name": "static",
+  "workers_dev": true,
+  "compatibility_date": "2025-10-05",
+  "preview_urls": true,
+  "assets": {
+    "directory": "dist",
+    "html_handling": "force-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

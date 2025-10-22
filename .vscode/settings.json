@@ -1,0 +1,26 @@
+{
+  "editor.tabSize": 2,
+  "files.eol": "\n",
+  "files.associations": {
+    "*.json": "jsonc",
+    "*.json5": "jsonc"
+  },
+  "cursor.general.globalCursorIgnoreList": [
+    "**/.env",
+    "**/.env.*",
+    "**/credentials.json",
+    "**/credentials.*.json",
+    "**/secret.json",
+    "**/secrets.json",
+    "**/*.key",
+    "**/*.pem",
+    "**/*.pfx",
+    "**/*.p12",
+    "**/*.crt",
+    "**/*.cer",
+    "**/id_rsa",
+    "**/id_dsa",
+    "**/.ssh/id_*",
+    "!**/.env.example"
+  ]
+}

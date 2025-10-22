@@ -1,0 +1,26 @@
+{
+  "extends": "astro/tsconfigs/strictest",
+  "compilerOptions": {
+    /* 路径别名 - 简化版 */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "@astrojs/ts-plugin"
+      }
+    ]
+  },
+  "include": [
+    ".astro/types.d.ts",
+    "src/**/*",
+    "*.config.ts",
+    "*.config.mjs"
+  ],
+  "exclude": [
+    "dist"
+  ]
+}
