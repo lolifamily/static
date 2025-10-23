@@ -1,11 +1,9 @@
 import type { APIRoute } from 'astro';
-import { posix as path } from 'node:path';
-import { site, base } from 'astro:config/server';
+import { base } from 'astro:config/server';
+import { getSitemapIndexUrl } from '@/utils/format';
 
 export const GET: APIRoute = () => {
-  // Sitemap URL must include base path
-  // Example: if base='/files/', sitemap is at /files/sitemap-index.xml
-  const sitemapUrl = new URL(path.join(base, 'sitemap-index.xml'), site).toString();
+  const sitemapUrl = getSitemapIndexUrl();
 
   return new Response(`User-agent: *
 Allow: ${base}

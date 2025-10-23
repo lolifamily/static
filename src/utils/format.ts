@@ -1,7 +1,10 @@
-export function formatBytes(bytes: number): string {
+import { posix as path } from 'node:path';
+import { site, base } from 'astro:config/server';
+
+export function formatBytes(bytes: number) {
   // Units in ascending order: smallest first for type-safe fallback to units[0]
   const units = [
-    { threshold: 1, name: 'B  ' },
+    { threshold: 1, name: 'B' },
     { threshold: 1024, name: 'KiB' },
     { threshold: 1024 ** 2, name: 'MiB' },
     { threshold: 1024 ** 3, name: 'GiB' },
@@ -15,7 +18,10 @@ export function formatBytes(bytes: number): string {
   // File system constraint: bytes are always integers
   // Display raw integers for bytes (0 B, 512 B, 1023 B)
   // Display decimals for converted units (1.5 KiB, 3.7 MiB)
-  return `${unit.threshold === 1 ? value : value.toFixed(1)} ${unit.name}`;
+  return {
+    value: unit.threshold === 1 ? String(value) : value.toFixed(1),
+    unit: unit.name,
+  };
 }
 
 export function formatDateTime(date: Date): string {
@@ -29,4 +35,8 @@ export function formatDateTime(date: Date): string {
     second: '2-digit',
     hour12: false,
   }).format(date);
+}
+
+export function getSitemapIndexUrl() {
+  return new URL(path.join(base, 'sitemap-index.xml'), site).toString();
 }

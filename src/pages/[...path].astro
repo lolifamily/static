@@ -3,7 +3,7 @@ import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import { ClientRouter } from 'astro:transitions';
 import { base } from 'astro:config/server';
 import { posix as path } from 'node:path';
-import { formatBytes, formatDateTime } from '@/utils/format';
+import { formatBytes, formatDateTime, getSitemapIndexUrl } from '@/utils/format';
 
 export async function getStaticPaths() {
   const allDirs = await getCollection('files');
@@ -100,6 +100,10 @@ import '@/styles/global.css';
     </title>
 
     <ClientRouter />
+
+    {/* 搜索引擎优化 */}
+    <link rel="canonical" href={new URL(currentPath, Astro.site)} />
+    <link rel="sitemap" href={getSitemapIndexUrl()} />
   </head>
   <body>
     <div class="container">
@@ -154,20 +158,26 @@ import '@/styles/global.css';
             </tr>
           )}
 
-          {items.map(item => (
-            <tr>
-              <td>
-                <span class="icon">
-                  {item.kind === 'directory' ? '📁' : '📄'}
-                </span>
-                <a href={path.join(currentPath, item.name)}>
-                  {item.name + (item.kind === 'directory' ? '/' : '')}
-                </a>
-              </td>
-              <td class="size">{formatBytes(item.size)}</td>
-              <td class="date">{formatDateTime(item.modified)}</td>
-            </tr>
-          ))}
+          {items.map((item) => {
+            const size = formatBytes(item.size);
+            return (
+              <tr>
+                <td>
+                  <span class="icon">
+                    {item.kind === 'directory' ? '📁' : '📄'}
+                  </span>
+                  <a href={path.join(currentPath, item.name)}>
+                    {item.name + (item.kind === 'directory' ? '/' : '')}
+                  </a>
+                </td>
+                <td class="size">
+                  <span>{size.value}</span>
+                  <span class="size-unit">{size.unit}</span>
+                </td>
+                <td class="date">{formatDateTime(item.modified)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 

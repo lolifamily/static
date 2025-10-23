@@ -5,9 +5,11 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   Cross-Origin-Opener-Policy: same-origin
-  Cross-Origin-Resource-Policy: same-origin
+  Cross-Origin-Resource-Policy: cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
-  ! Access-Control-Allow-Origin
+  Access-Control-Allow-Origin: *
 
 /_astro/*
   Cache-Control: public, max-age=63072000, immutable
+  Cross-Origin-Resource-Policy: same-origin
+  ! Access-Control-Allow-Origin
