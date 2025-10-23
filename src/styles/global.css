@@ -137,13 +137,11 @@ td.placeholder {
 }
 
 td.size {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 1ch;
-  justify-items: end;
+  text-align: right;
 }
 
 .size-unit {
+  display: inline-block;
   width: 3ch;
   text-align: left;
 }
