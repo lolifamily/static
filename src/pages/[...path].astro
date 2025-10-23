@@ -83,7 +83,7 @@ const pathSegments = currentPath.split('/').filter(Boolean);
 
 const breadcrumbs = pathSegments.map((part, i) => ({
   name: part,
-  path: '/' + pathSegments.slice(0, i + 1).join('/'),
+  path: '/' + pathSegments.slice(0, i + 1).join('/') + '/',
 }));
 
 import '@/styles/global.css';
@@ -146,7 +146,7 @@ import '@/styles/global.css';
                     (e.g., /files/ when base='/files/'), users can navigate up to site root.
 
                     Examples:
-                    - At /files/foo: parent is /files (breadcrumbs.at(-2).path)
+                    - At /files/foo/: parent is /files/ (breadcrumbs.at(-2).path)
                     - At /files/: parent is / (breadcrumbs.at(-2) is undefined, fallback to '/')
                     - At /: this row is hidden (currentPath === '/' condition)
 
@@ -160,14 +160,15 @@ import '@/styles/global.css';
 
           {items.map((item) => {
             const size = formatBytes(item.size);
+            const name = item.name + (item.kind === 'directory' ? '/' : '');
             return (
               <tr>
                 <td>
                   <span class="icon">
                     {item.kind === 'directory' ? '📁' : '📄'}
                   </span>
-                  <a href={path.join(currentPath, item.name)}>
-                    {item.name + (item.kind === 'directory' ? '/' : '')}
+                  <a href={path.join(currentPath, name)}>
+                    {name}
                   </a>
                 </td>
                 <td class="size">
