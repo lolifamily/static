@@ -23,11 +23,11 @@ export async function getStaticPaths() {
 //
 // currentPath: External path with base (for URLs and display)
 //   - Used for HTML links and breadcrumbs
-//   - Examples with base='/': '/', '/foo', '/foo/bar'
-//   - Examples with base='/files/': '/files/', '/files/foo', '/files/foo/bar'
+//   - Examples with base='/': '/', '/foo/', '/foo/bar/'
+//   - Examples with base='/files/': '/files/', '/files/foo/', '/files/foo/bar/'
 //   - This ensures links work correctly when base changes
 const routePath = Astro.params.path ?? '';
-const currentPath = path.join(base, routePath);
+const currentPath = path.join(base, routePath, '/');
 
 interface Props {
   items: CollectionEntry<'files'>['data']['children'];
@@ -57,7 +57,7 @@ const FooterContent = footerRendered?.Content;
 //
 // WHY use currentPath (with base) instead of routePath (without base)?
 //   - URL IS: /files/foo/bar (this is what user sees in address bar)
-//   - routePath is: foo/bar (internal Astro routing detail)
+//   - routePath is: foo/bar/ (internal Astro routing detail)
 //   - Breadcrumbs should match the URL, not internal routing
 //
 // Example 1: base='/' (app at site root)
