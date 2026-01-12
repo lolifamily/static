@@ -24,21 +24,21 @@ This is a **personal, opinionated solution**. It contains hardcoded strings and 
 ```
 static/
 ├── public/                    # Your files to be listed (not in Git for large deployments)
-│   ├── charliez0/            # Example: User 1's files
+│   ├── charliez0/             # Example: User 1's files
 │   │   ├── avatar.jpg
 │   │   └── background.jpg
-│   ├── lolifamily/           # Example: User 2's files
+│   ├── lolifamily/            # Example: User 2's files
 │   │   ├── avatar.webp
 │   │   └── images/
-│   └── _headers              # Cloudflare Pages headers (CSP, caching, etc.)
+│   └── _headers               # Cloudflare Pages headers (CSP, caching, etc.)
 │
 ├── src/
 │   ├── pages/
-│   │   ├── [...path].astro   # Dynamic route: generates a page for each directory
-│   │   └── robots.txt.ts     # SEO: robots.txt generator
+│   │   ├── [...path].astro    # Dynamic route: generates a page for each directory
+│   │   └── robots.txt.ts      # SEO: robots.txt generator
 │   │
 │   ├── content/
-│   │   ├── config.ts          # Content Collections: scans public/ for files + MDX docs
+│   │   ├── content.config.ts  # Content Collections: scans public/ for files + MDX docs
 │   │   └── docs/
 │   │       └── header.mdx     # Optional: per-directory header/footer content
 │   │
@@ -50,7 +50,8 @@ static/
 │
 ├── .github/
 │   └── workflows/
-│       └── build.yml          # CI/CD: Build and deploy to Cloudflare Pages
+│       ├── build.yml          # CI/CD: Build and deploy to Cloudflare Pages
+│       └── lint.yml           # CI/CD: TypeLint and ESLint
 │
 ├── astro.config.ts            # Astro configuration
 ├── package.json               # Dependencies and scripts

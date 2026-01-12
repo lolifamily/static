@@ -38,6 +38,12 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
+  markdown: {
+    remarkRehype: {
+      footnoteBackLabel: (idx, reIdx) => `返回引用 ${idx + 1}${reIdx > 1 ? `-${reIdx}` : ''}`,
+      footnoteLabel: '脚注',
+    },
+  },
   image: {
     layout: 'constrained',
     responsiveStyles: true,
