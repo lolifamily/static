@@ -1,0 +1,13 @@
+## Listing 逻辑测试目录
+
+> 本文件使用 MDX 格式以测试 MDX 渲染功能
+
+用于验证 `content.config.ts` 中文件扫描逻辑的测试用例：
+
+| 目录 | 内容 | 预期行为 |
+|------|------|----------|
+| [`index/`](./index/) | [`index.html`](./index/index.html) + 子目录 [`recursive/`](./index/recursive/) | 不生成 listing（用户页面优先），但子目录正常递归生成 |
+| [`onlyHidden/`](./onlyHidden/) | 仅 [`.hidden`](./onlyHidden/.hidden) 文件 | 生成空 listing，隐藏文件算有内容 |
+| [`onlyHiddenDir/`](./onlyHiddenDir/) | 仅 [`.hidden/`](./onlyHiddenDir/.hidden/) 目录（内含 [`SECRET`](./onlyHiddenDir/.hidden/SECRET)） | 生成空 listing；[`.hidden/`](./onlyHiddenDir/.hidden/) 可硬进入但无链接 |
+| `onlySkip/` | 仅 `_skipped` 文件 | 不生成 listing，Astro 跳过的不算内容 |
+

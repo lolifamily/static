@@ -98,6 +98,7 @@ import '@/styles/global.css';
       Index of
       {currentPath}
     </title>
+    <meta name="description" content={`Directory listing of ${currentPath}`} />
 
     <ClientRouter />
 
@@ -106,7 +107,7 @@ import '@/styles/global.css';
     <link rel="sitemap" href={getSitemapIndexUrl()} />
   </head>
   <body>
-    <div class="container">
+    <main class="container">
       {HeaderContent && (
         <div class="markdown-body markdown-header">
           <HeaderContent />
@@ -128,7 +129,7 @@ import '@/styles/global.css';
         {currentPath}
       </h1>
 
-      <table>
+      <table class="file-list">
         <thead>
           <tr>
             <th>Name</th>
@@ -187,6 +188,6 @@ import '@/styles/global.css';
           <FooterContent />
         </div>
       )}
-    </div>
+    </main>
   </body>
 </html>

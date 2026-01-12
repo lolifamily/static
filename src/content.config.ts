@@ -19,56 +19,67 @@ export const collections = {
       const entries: { id: string; children: FileEntry[] }[] = [];
 
       // Post-order traversal: calculate size bottom-up
-      function scanDir(dir: string, relativePath = ''): number {
+      // Returns null for empty directories (no page generated, not shown in parent)
+      function scanDir(dir: string, relativePath = ''): number | null {
         // No try-catch: let build fail if file system has issues
         // Rationale: if readdirSync fails here, Vite's publicDir copy will also fail
         // Fail fast and loud (build error) is better than silent skip (runtime 404s)
         const items = fs.readdirSync(dir, { withFileTypes: true });
         const children: FileEntry[] = [];
-
         let totalSize = 0;
+        let hasHiddenContent = false;
+        let hasIndexHtml = false;
 
         for (const item of items) {
-          if (item.name.startsWith('.')) continue;
-          if (item.name === '_astro' || item.name.endsWith('.html')) continue;
+          // Astro-ignored (_): never copied to dist/, completely skip
+          if (item.name.startsWith('_')) continue;
 
-          // Store result for reuse
+          const isHidden = item.name.startsWith('.');
           const isDirectory = item.isDirectory();
           const isFile = item.isFile();
 
           // Skip symlinks, sockets, and other special files
-          // Symlinks shouldn't exist in public/ (Git doesn't preserve target, breaks in CI)
-          // Even if present, Vite resolves symlinks during build, so skipping in listing is safe
           if (!isDirectory && !isFile) continue;
 
           const itemPath = path.join(dir, item.name);
           const stats = fs.statSync(itemPath);
 
-          const size = isDirectory
-            ? scanDir(itemPath, path.posix.join(relativePath, item.name))
-            : stats.size;
+          if (isDirectory) {
+            // Always recurse into subdirs (generate their pages)
+            const size = scanDir(itemPath, path.posix.join(relativePath, item.name));
+            // Hidden dirs: generate page but don't show link in parent
+            if (isHidden) {
+              if (size !== null) hasHiddenContent = true;
+              continue;
+            }
+            if (size === null) continue; // Empty subdir: skip
+            children.push({ kind: 'directory', name: item.name, size, modified: stats.mtime });
+            totalSize += size;
+          } else {
+            // index.html: user's own page takes precedence, skip listing for this dir
+            if (item.name === 'index.html') hasIndexHtml = true;
 
-          // Only the 'kind' field differs, everything else is shared
-          children.push({
-            kind: isDirectory ? 'directory' : 'file',
-            name: item.name,
-            size,
-            modified: stats.mtime,
-          });
-
-          totalSize += size;
+            // Hidden files: don't show, but mark parent as having content
+            if (isHidden) {
+              hasHiddenContent = true;
+              continue;
+            }
+            children.push({ kind: 'file', name: item.name, size: stats.size, modified: stats.mtime });
+            totalSize += stats.size;
+          }
         }
 
-        // Sort once at build time: directories first, then alphabetically
-        children.sort((a, b) => {
-          if (a.kind !== b.kind) return a.kind === 'directory' ? -1 : 1;
-          return a.name.localeCompare(b.name);
-        });
+        // No content at all = truly empty, don't list
+        if (children.length === 0 && !hasHiddenContent && !hasIndexHtml) return null;
 
-        entries.push({
-          id: `/${relativePath}`,
-          children,
-        });
+        // Skip listing generation if user has their own index.html
+        if (!hasIndexHtml) {
+          children.sort((a, b) => {
+            if (a.kind !== b.kind) return a.kind === 'directory' ? -1 : 1;
+            return a.name.localeCompare(b.name);
+          });
+          entries.push({ id: `/${relativePath}`, children });
+        }
 
         return totalSize;
       }

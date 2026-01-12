@@ -79,8 +79,8 @@ a:hover {
   border-bottom: 1px solid var(--border);
 }
 
-/* Table */
-table {
+/* File List Table */
+.file-list {
   width: 100%;
   border-collapse: collapse;
   background: var(--bg-card);
@@ -89,7 +89,7 @@ table {
   overflow: hidden;
 }
 
-th {
+.file-list th {
   padding: .75rem;
   background: var(--bg-table-header);
   border-bottom: 2px solid var(--border);
@@ -99,60 +99,61 @@ th {
   text-align: left;
 }
 
-td {
+.file-list td {
   padding: .5rem .75rem;
   border-bottom: 1px solid var(--border);
 }
 
-tr:last-child td {
+.file-list tr:last-child td {
   border-bottom: none;
 }
 
-tr:hover td {
+.file-list tr:hover td {
   background: var(--bg-hover);
 }
 
 /* Name列填满剩余空间，Size/Date列自动收缩到内容宽度 */
-th:first-child,
-td:first-child {
+.file-list th:first-child,
+.file-list td:first-child {
   width: 100%;
 }
 
-th, td {
+.file-list th,
+.file-list td {
   white-space: nowrap;
 }
 
-th.size,
-th.date {
+.file-list th.size,
+.file-list th.date {
   text-align: center;
 }
 
 /* Size, Date, Placeholder share the same visual style */
-td.size,
-td.date,
-td.placeholder {
+.file-list td.size,
+.file-list td.date,
+.file-list td.placeholder {
   font-family: var(--mono);
   color: var(--text-muted);
   font-size: .9em;
 }
 
-td.size {
+.file-list td.size {
   text-align: right;
 }
 
-.size-unit {
+.file-list .size-unit {
   display: inline-block;
   width: 3ch;
   text-align: left;
 }
 
-td.date,
-td.placeholder {
+.file-list td.date,
+.file-list td.placeholder {
   text-align: center;
 }
 
 /* Icon */
-.icon {
+.file-list .icon {
   margin-right: .5rem;
 }
 
@@ -171,6 +172,27 @@ td.placeholder {
   padding: .2em .4em;
   border-radius: 4px;
   font-family: var(--mono);
+}
+
+.markdown-body blockquote {
+  padding-left: 1em;
+  border-left: 3px solid var(--border);
+  color: var(--text-muted);
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+}
+
+.markdown-body th,
+.markdown-body td {
+  padding: .4em .8em;
+  border: 1px solid var(--border);
+}
+
+.markdown-body th {
+  background: var(--bg-table-header);
+  font-weight: 600;
 }
 
 /* Responsive */
