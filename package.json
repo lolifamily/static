@@ -24,8 +24,8 @@
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/ts-plugin": "^1.10.6",
     "@playform/compress": "^0.2.1",
-    "astro": "^5.16.11",
-    "lightningcss": "^1.30.2",
+    "astro": "^5.16.15",
+    "lightningcss": "^1.31.1",
     "sharp": "^0.34.5",
     "terser": "^5.46.0"
   },
@@ -33,9 +33,9 @@
     "@astrojs/check": "^0.9.6",
     "@eslint/css": "^0.14.1",
     "@eslint/js": "^9.39.2",
-    "@stylistic/eslint-plugin": "^5.7.0",
-    "@types/node": "^25.0.9",
-    "@typescript-eslint/parser": "^8.53.0",
+    "@stylistic/eslint-plugin": "^5.7.1",
+    "@types/node": "^25.0.10",
+    "@typescript-eslint/parser": "^8.53.1",
     "eslint": "^9.39.2",
     "eslint-interactive": "^12.0.0",
     "eslint-mdx": "^3.6.2",
@@ -43,7 +43,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-mdx": "^3.6.2",
     "jiti": "^2.6.1",
-    "typescript-eslint": "^8.53.0"
+    "typescript-eslint": "^8.53.1"
   },
   "pnpm": {
     "overrides": {
@@ -55,5 +55,5 @@
       "sharp"
     ]
   },
-  "packageManager": "pnpm@10.28.0"
+  "packageManager": "pnpm@10.28.1"
 }

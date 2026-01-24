@@ -35,12 +35,15 @@ static/
 ├── src/
 │   ├── pages/
 │   │   ├── [...path].astro    # Dynamic route: generates a page for each directory
+│   │   ├── 403.astro          # Forbidden error page
+│   │   ├── 404.astro          # Not found error page
 │   │   └── robots.txt.ts      # SEO: robots.txt generator
 │   │
 │   ├── content/
-│   │   ├── content.config.ts  # Content Collections: scans public/ for files + MDX docs
 │   │   └── docs/
-│   │       └── header.mdx     # Optional: per-directory header/footer content
+│   │       └── header.md      # Optional: per-directory header/footer content
+│   │
+│   ├── content.config.ts      # Content Collections: scans public/ for files + docs
 │   │
 │   ├── utils/
 │   │   └── format.ts          # Utilities: byte formatting, date formatting
@@ -65,7 +68,7 @@ static/
 ### 1. Build-Time File Scanning
 
 ```typescript
-// src/content/config.ts
+// src/content.config.ts
 defineCollection({
   loader: () => {
     // Recursively scan public/ directory
@@ -78,9 +81,12 @@ defineCollection({
 
 **Key behavior:**
 - Scans `public/` at **build time**
-- Skips hidden files (`.git`, `.env`, etc.)
+- Skips hidden files (`.` prefix): not shown in listing, but parent still listed if they exist
+- Skips Astro-ignored files (`_` prefix): Astro doesn't copy them to dist/
 - Skips symlinks (Git doesn't preserve them)
-- Skips `_astro/` directory (build artifacts)
+- Skips empty directories (no content = no listing page)
+- Directories with `index.html` skip listing generation (user page takes precedence)
+- Hidden directories (`.` prefix) generate pages but no parent link (hard-enter only)
 - Calculates recursive directory sizes
 - Sorts: directories first, then alphabetically
 
@@ -101,7 +107,7 @@ export async function getStaticPaths() {
 - One HTML page per directory
 - Breadcrumb navigation matching URL structure
 - File table with size, modification date
-- Optional MDX header/footer per directory
+- Optional Markdown/MDX header/footer per directory
 
 ### 3. Deployment
 
@@ -136,16 +142,18 @@ pnpm online:workers # Deploy to Cloudflare Workers
 
 ### Adding Custom Headers/Footers
 
-Create MDX files in `src/content/docs/`:
+Create Markdown or MDX files in `src/content/docs/`:
 
 ```
 src/content/docs/
-├── header.mdx              # Root directory header
-├── footer.mdx              # Root directory footer
+├── header.md               # Root directory header
+├── footer.md               # Root directory footer
 └── charliez0/
-    ├── header.mdx          # Header for /charliez0/
-    └── footer.mdx          # Footer for /charliez0/
+    ├── header.md           # Header for /charliez0/
+    └── footer.md           # Footer for /charliez0/
 ```
+
+Both `.md` and `.mdx` are supported. Use `.md` for plain Markdown (faster builds), `.mdx` if you need JSX components.
 
 Headers are rendered above the file listing, footers below.
 
@@ -221,7 +229,7 @@ export default defineConfig({
 This project follows the "good enough" principle:
 
 - **Correctness:** Post-order traversal, proper sorting, fail-fast builds
-- **Simplicity:** ~335 lines of core code, minimal abstractions
+- **Simplicity:** ~360 lines of core code (excluding CSS), minimal abstractions
 - **Pragmatism:** Solves a specific problem (static file listings) without over-engineering
 - **Personal:** Hardcoded for specific use cases, not a general-purpose framework
 
