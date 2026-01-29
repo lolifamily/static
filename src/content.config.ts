@@ -1,4 +1,5 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -89,7 +90,7 @@ function loadFiles(): { id: string; children: FileEntry[] }[] {
   return entries;
 }
 
-const filesLoader: Loader = {
+const filesLoader = {
   name: 'files-loader',
   load: ({ store, watcher, logger }) => {
     store.clear();
@@ -110,7 +111,7 @@ const filesLoader: Loader = {
 
     return Promise.resolve();
   },
-};
+} satisfies Loader;
 
 export const collections = {
   files: defineCollection({

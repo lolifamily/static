@@ -1,5 +1,5 @@
 ---
-import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, render, type CollectionEntry } from 'astro:content';
 import { ClientRouter } from 'astro:transitions';
 import { base } from 'astro:config/server';
 import { posix as path } from 'node:path';
@@ -43,8 +43,8 @@ const [header, footer] = await Promise.all([
 ]);
 
 const [headerRendered, footerRendered] = await Promise.all([
-  header?.render(),
-  footer?.render(),
+  header ? render(header) : null,
+  footer ? render(footer) : null,
 ]);
 
 const HeaderContent = headerRendered?.Content;
