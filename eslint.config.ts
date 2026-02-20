@@ -1,4 +1,6 @@
 import { defineConfig } from 'eslint/config';
+import { fixupPluginRules } from '@eslint/compat';
+
 import eslint from '@eslint/js';
 import css from '@eslint/css';
 import tseslint from 'typescript-eslint';
@@ -52,7 +54,7 @@ export default defineConfig(
       },
     },
     plugins: {
-      mdx,
+      mdx: fixupPluginRules(mdx),
     },
     // 使用 createRemarkProcessor 并确保配置一致
     processor: mdx.createRemarkProcessor({

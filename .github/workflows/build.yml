@@ -62,6 +62,9 @@ jobs:
           name: dist
           path: dist
 
+      - name: Prune pnpm store
+        run: pnpm store prune
+
       - name: Exit with error if any step failed
         if: |
           steps.cloudflare_workers.outcome != 'success' || steps.cloudflare_pages.outcome != 'success'

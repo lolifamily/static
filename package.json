@@ -23,31 +23,36 @@
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/ts-plugin": "^1.10.6",
+    "@eslint/compat": "^2.0.2",
     "@playform/compress": "^0.2.1",
-    "astro": "^5.17.1",
+    "astro": "^5.17.3",
     "lightningcss": "^1.31.1",
+    "pangu": "^7.2.0",
     "sharp": "^0.34.5",
-    "terser": "^5.46.0"
+    "terser": "^5.46.0",
+    "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
     "@eslint/css": "^0.14.1",
-    "@eslint/js": "^9.39.2",
-    "@stylistic/eslint-plugin": "^5.7.1",
-    "@types/node": "^25.1.0",
-    "@typescript-eslint/parser": "^8.54.0",
-    "eslint": "^9.39.2",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.9.0",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^25.3.0",
+    "@typescript-eslint/parser": "^8.56.0",
+    "eslint": "^10.0.0",
     "eslint-interactive": "^12.0.0",
     "eslint-mdx": "^3.6.2",
-    "eslint-plugin-astro": "^1.5.0",
+    "eslint-plugin-astro": "^1.6.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-mdx": "^3.6.2",
     "jiti": "^2.6.1",
-    "typescript-eslint": "^8.54.0"
+    "typescript-eslint": "^8.56.0"
   },
   "pnpm": {
     "overrides": {
       "html-minifier-terser": "npm:html-minifier-next",
+      "lightningcss": "^1.31.1",
       "vite": "^7.1.11"
     },
     "onlyBuiltDependencies": [
@@ -55,5 +60,5 @@
       "sharp"
     ]
   },
-  "packageManager": "pnpm@10.28.2"
+  "packageManager": "pnpm@10.30.1"
 }

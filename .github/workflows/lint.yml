@@ -37,6 +37,9 @@ jobs:
         run: pnpm lint
         continue-on-error: true
 
+      - name: Prune pnpm store
+        run: pnpm store prune
+
       - name: Check results
         if: steps.lint.outcome != 'success' || steps.typecheck.outcome != 'success'
         run: exit 1
