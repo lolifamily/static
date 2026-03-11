@@ -16,9 +16,6 @@ A static site generator that creates a browsable directory listing for files hos
 
 This is a **personal, opinionated solution**. It contains hardcoded strings and assumptions specific to the use case. Fork and adapt as needed.
 
----
-
-
 ## Project Structure
 
 ```
@@ -60,8 +57,6 @@ static/
 ├── package.json               # Dependencies and scripts
 └── pnpm-lock.yaml             # Lockfile
 ```
-
----
 
 ## How It Works
 
@@ -121,8 +116,6 @@ export async function getStaticPaths() {
 
 **Result:** Pure static HTML served from CDN, zero server-side logic.
 
----
-
 ## Usage
 
 ### Development
@@ -140,6 +133,16 @@ pnpm online:pages   # Deploy to Cloudflare Pages
 pnpm online:workers # Deploy to Cloudflare Workers
 ```
 
+### Force Full Rebuild
+
+By default, CI uses Astro's incremental build cache. To force a full rebuild (skip cache), include `[full]` in your commit title:
+
+```bash
+git commit -m "Update something [full]"
+```
+
+This runs `astro build --force` instead of `astro build`. Useful when cache artifacts are stale or after major config changes.
+
 ### Adding Custom Headers/Footers
 
 Create Markdown or MDX files in `src/content/docs/`:
@@ -156,8 +159,6 @@ src/content/docs/
 Both `.md` and `.mdx` are supported. Use `.md` for plain Markdown (faster builds), `.mdx` if you need JSX components.
 
 Headers are rendered above the file listing, footers below.
-
----
 
 ## Handling Large File Workflow (GB+, many files)
 
@@ -205,8 +206,6 @@ export default defineConfig({
 - Don't track `public/` in Git (add to `.gitignore`)
 - Use `wrangler` to sync changes (it's smart about incremental uploads)
 
----
-
 ## Configuration
 
 ### Base Path
@@ -222,8 +221,6 @@ export default defineConfig({
 
 **Breadcrumbs will include base segments** (this is intentional, mirrors nginx behavior).
 
----
-
 ## Design Philosophy
 
 This project follows the "good enough" principle:
@@ -235,13 +232,9 @@ This project follows the "good enough" principle:
 
 If you need a full-featured file manager, look elsewhere. This is a directory lister, and it does one thing well.
 
----
-
 ## License
 
 MIT
-
----
 
 ## FAQ
 
@@ -291,8 +284,6 @@ The same caching and build optimizations apply. However, if your files are alrea
 
 **Q: The code has hardcoded strings like "zh-CN"!**
 A: Yes. This is a personal project template. Fork it, replace the strings, make it yours.
-
----
 
 ## Credits
 

@@ -2,16 +2,15 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
           package-manager-cache: false
@@ -23,13 +22,13 @@ jobs:
       - name: Get pnpm store path
         run: echo PNPM_STORE_PATH=$(pnpm store path --silent) >> "$GITHUB_ENV"
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: ${{ env.PNPM_STORE_PATH }}
           key: pnpm-cache-production-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: pnpm-cache-production-${{ runner.os }}-${{ runner.arch }}-
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         with:
           path: |
             .astro
@@ -38,7 +37,17 @@ jobs:
           restore-keys: astro-build-
 
       - run: pnpm install --frozen-lockfile --production
-      - run: pnpm build
+
+      # Use build:full when commit title (first line) contains [full]
+      - name: Detect [full] in commit title
+        run: |
+          if git log -1 --pretty=%s | grep -q '\[full\]'; then
+            echo "BUILD_CMD=pnpm build:full" >> $GITHUB_ENV
+          else
+            echo "BUILD_CMD=pnpm build" >> $GITHUB_ENV
+          fi
+
+      - run: ${{ env.BUILD_CMD }}
 
       - name: Deploy to Cloudflare Workers
         env:
@@ -57,7 +66,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist
