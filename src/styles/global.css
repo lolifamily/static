@@ -2,7 +2,8 @@
   /* Colors */
   --text: #333;
   --text-muted: #666;
-  --link: #0066cc;
+  --link: #0055aa;
+  --link-hover: #cc0000;
   --bg: #fafafa;
   --bg-card: white;
   --bg-hover: #f5f5f5;
@@ -28,10 +29,18 @@ body {
 
 a {
   color: var(--link);
-  text-decoration: none;
 }
 
 a:hover {
+  color: var(--link-hover);
+}
+
+/* 文件列表中每行都是链接，上下文已足够明确，不需要下划线 */
+.file-list a {
+  text-decoration: none;
+}
+
+.file-list a:hover {
   text-decoration: underline;
 }
 
@@ -179,7 +188,7 @@ a:hover {
   border-bottom: 1px solid var(--border);
 }
 
-.markdown-body :is(p, ul, ol, pre, blockquote, table, details) {
+.markdown-body :is(p, ul, ol, dl, blockquote, table, details, .expressive-code) {
   margin-top: 0;
   margin-bottom: 1em;
 }

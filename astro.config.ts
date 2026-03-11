@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
+import expressiveCode from 'astro-expressive-code';
 import playformCompress from '@playform/compress';
 
 import remarkPangu from './src/plugins/remark-pangu';
@@ -17,7 +18,7 @@ export default defineConfig({
   trailingSlash: 'always',
   output: 'static',
   cacheDir: '.cache',
-  integrations: [mdx({ optimize: true }), playformCompress({
+  integrations: [expressiveCode(), mdx({ optimize: true }), playformCompress({
     CSS: false,
     HTML: {
       'html-minifier-terser': {
@@ -48,10 +49,6 @@ export default defineConfig({
     format: 'directory',
   },
   markdown: {
-    shikiConfig: {
-      theme: 'gruvbox-light-hard',
-      wrap: true,
-    },
     remarkPlugins: [remarkPangu, [remarkRemoveCjkBreaks, {
       includeEmoji: true,
       includeMathWithPunctuation: true,
