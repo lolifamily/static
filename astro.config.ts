@@ -17,9 +17,6 @@ export default defineConfig({
   trailingSlash: 'always',
   output: 'static',
   cacheDir: '.cache',
-  prefetch: {
-    prefetchAll: true,
-  },
   integrations: [mdx({ optimize: true }), playformCompress({
     CSS: false,
     HTML: {
@@ -72,8 +69,6 @@ export default defineConfig({
   },
   experimental: {
     clientPrerender: true,
-    staticImportMetaEnv: true,
-    headingIdCompat: true,
     contentIntellisense: true,
   },
 });

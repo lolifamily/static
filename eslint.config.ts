@@ -1,5 +1,4 @@
 import { defineConfig } from 'eslint/config';
-import { fixupPluginRules } from '@eslint/compat';
 
 import eslint from '@eslint/js';
 import css from '@eslint/css';
@@ -54,7 +53,7 @@ export default defineConfig(
       },
     },
     plugins: {
-      mdx: fixupPluginRules(mdx),
+      mdx,
     },
     // 使用 createRemarkProcessor 并确保配置一致
     processor: mdx.createRemarkProcessor({
@@ -66,7 +65,6 @@ export default defineConfig(
       'mdx/remark': 'error',
       'no-unused-expressions': 'error',
       'no-unused-vars': 'off',
-      'react/react-in-jsx-scope': 'off',
     },
   },
   {
@@ -78,9 +76,6 @@ export default defineConfig(
       stylisticConfig,
     ],
     files: ['**/*.{js,jsx,cjs,mjs,ts,tsx,astro}'],
-    plugins: {
-      '@stylistic': stylistic,
-    },
     rules: {
       '@stylistic/no-multi-spaces': [
         'error',
@@ -95,6 +90,8 @@ export default defineConfig(
           maxEOF: 0,
         },
       ],
+      '@stylistic/jsx-pascal-case': 'error',
+      '@stylistic/jsx-self-closing-comp': 'error',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -113,6 +110,10 @@ export default defineConfig(
   {
     files: ['**/*.{js,cjs,mjs,jsx}'],
     extends: [tseslint.configs.disableTypeChecked],
+  },
+  {
+    ...tseslint.configs.eslintRecommended,
+    files: ['**/*.{astro,mdx}'],
   },
   {
     files: ['**/*.{md,mdx,astro}/**'],
