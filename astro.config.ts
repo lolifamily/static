@@ -48,6 +48,10 @@ export default defineConfig({
     format: 'directory',
   },
   markdown: {
+    shikiConfig: {
+      theme: 'gruvbox-light-hard',
+      wrap: true,
+    },
     remarkPlugins: [remarkPangu, [remarkRemoveCjkBreaks, {
       includeEmoji: true,
       includeMathWithPunctuation: true,

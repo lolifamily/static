@@ -3,7 +3,7 @@ import { z } from 'astro/zod';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import type { Loader } from 'astro/loaders';
+import { glob, type Loader } from 'astro/loaders';
 
 // Simple schema with enum literal - DRY principle
 const FileEntrySchema = z.object({
@@ -123,7 +123,13 @@ export const collections = {
 
   // 使用官方 glob loader 处理 Markdown
   docs: defineCollection({
-    type: 'content',
+    loader: glob({
+      pattern: ['**/*.{md,mdx}', '**/.*/**/*.{md,mdx}'],
+      base: './src/content/docs',
+      generateId(options) {
+        return options.entry.replace(/\.[^.]+$/, '');
+      },
+    }),
     schema: z.object({}),
   }),
 };

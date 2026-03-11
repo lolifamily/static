@@ -158,7 +158,7 @@ a:hover {
 }
 
 /* Simple Markdown, Only supports what needed */
-.markdown-body :is(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, table, details) {
+.markdown-body :is(h1, h2, h3, h4, h5, h6, p, ul, ol, pre, blockquote, table, details) {
   margin-bottom: 1em;
 }
 
@@ -168,10 +168,17 @@ a:hover {
 }
 
 .markdown-body code {
+  font-family: var(--mono);
+}
+
+.markdown-body :not(pre) > code {
   background: var(--bg-hover);
   padding: .2em .4em;
   border-radius: 4px;
-  font-family: var(--mono);
+}
+
+.markdown-body pre {
+  padding: .2em .4em;
 }
 
 .markdown-body blockquote {
