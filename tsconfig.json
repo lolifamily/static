@@ -4,11 +4,9 @@
     /* lint .d.ts files */
     "skipLibCheck": false,
     /* 路径别名 - 简化版 */
-    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"],
+      "node_modules/*": ["./node_modules/*"],
     },
     "plugins": [
       {
