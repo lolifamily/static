@@ -183,17 +183,34 @@ export default defineConfig({
 // package.json
 {
   "scripts": {
-    "build:prod": "rm -rf public/_astro && astro build && mv dist/* public/ && rmdir dist",
+    "build:prod": "find public -name 'index.html' -delete && rm -rf public/_astro && astro build && mv dist/* public/ && rmdir dist",
     "deploy": "npm run build:prod && pnpm online:pages"
   }
 }
 ```
 
 **Workflow:**
-1. Clean old `_astro/` artifacts (prevents file count accumulation)
-2. Build HTML to `dist/` (only a few MB)
-3. Move `dist/*` into `public/` (overwrites old HTML)
-4. Deploy `public/` with `wrangler` (incremental upload, only changed files)
+1. **Delete old `index.html` files** from `public/` (critical — see note below)
+2. Clean old `_astro/` artifacts (prevents file count accumulation)
+3. Build HTML to `dist/` (only a few MB)
+4. Move `dist/*` into `public/` (overwrites old HTML)
+5. Deploy `public/` with `wrangler` (incremental upload, only changed files)
+
+> **Why step 1 is required:** The build scans `public/` to collect file metadata. If it
+> finds an `index.html` in a directory, it assumes that's a user-provided custom page and
+> **skips generating a listing for that directory**. Without cleanup, the previous build's
+> generated `index.html` files trick the next build into producing empty output.
+
+> **Custom `index.html` warning:** If you have hand-written `index.html` files in certain
+> directories (e.g. a custom landing page), `find public -name 'index.html' -delete` will
+> delete those too. In that case, replace the blanket `find` with targeted deletions that
+> skip your custom files:
+> ```bash
+> # Example: delete all generated index.html, but preserve public/photos/index.html
+> find public -name 'index.html' ! -path 'public/photos/index.html' -delete
+> ```
+> Alternatively, keep your custom `index.html` files outside `public/` and copy them back
+> after `mv dist/* public/`.
 
 **Why this works:**
 - Content Collection scans `public/` **before** build (metadata is collected)

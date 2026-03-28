@@ -5,8 +5,7 @@
     "skipLibCheck": false,
     /* 路径别名 - 简化版 */
     "paths": {
-      "@/*": ["./src/*"],
-      "node_modules/*": ["./node_modules/*"],
+      "@/*": ["./src/*"]
     },
     "plugins": [
       {
