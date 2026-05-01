@@ -1,6 +1,6 @@
 overrides:
   html-minifier-terser: npm:html-minifier-next
-  vite: ^7.3.1
+  vite: ^7.3.2
   lightningcss: ^1.32.0
 
 onlyBuiltDependencies:

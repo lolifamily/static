@@ -37,15 +37,17 @@ export default defineConfig(
       },
     },
   },
-  eslint.configs.recommended,
-  css.configs.recommended,
+  {
+    files: ['**/*.css'],
+    plugins: {
+      css,
+    },
+    language: 'css/css',
+  },
   {
     files: ['**/*.{md,mdx}'],
     languageOptions: {
       parser: mdxParser,
-      globals: {
-        React: false,
-      },
       // parserOptions 是关键，会传递给 performSyncWork
       parserOptions: {
         remarkConfigPath: 'package.json',
@@ -69,6 +71,7 @@ export default defineConfig(
   },
   {
     extends: [
+      eslint.configs.recommended,
       tseslint.configs.strictTypeChecked,
       tseslint.configs.stylisticTypeChecked,
       astro.configs['flat/recommended'],
