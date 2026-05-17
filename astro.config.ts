@@ -23,7 +23,6 @@ export default defineConfig({
     HTML: {
       'html-minifier-terser': {
         minifyCSS: { targets: browserslistToTargets(['chrome 99', 'edge 99', 'firefox 97', 'safari 15']) },
-        minifySVG: true,
       },
     },
     JSON: false,
@@ -71,5 +70,10 @@ export default defineConfig({
   experimental: {
     clientPrerender: true,
     contentIntellisense: true,
+    rustCompiler: true,
+    queuedRendering: {
+      enabled: true,
+      contentCache: true,
+    },
   },
 });

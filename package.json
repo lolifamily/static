@@ -20,16 +20,17 @@
     "online:pages": "pnpx wrangler@latest pages deploy"
   },
   "dependencies": {
-    "@astrojs/mdx": "^5.0.4",
+    "@astrojs/compiler-rs": "^0.2.0",
+    "@astrojs/mdx": "^5.0.6",
     "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/ts-plugin": "^1.10.7",
+    "@astrojs/ts-plugin": "^1.10.8",
     "@playform/compress": "^0.2.3",
-    "astro": "^6.2.1",
-    "astro-expressive-code": "^0.41.7",
+    "astro": "^6.3.3",
+    "astro-expressive-code": "^0.42.0",
     "lightningcss": "^1.32.0",
     "pangu": "^7.2.1",
     "sharp": "^0.34.5",
-    "terser": "^5.46.2",
+    "terser": "^5.47.1",
     "typescript": "^6.0.3",
     "unist-util-visit": "^5.1.0"
   },
@@ -39,16 +40,16 @@
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@types/mdast": "^4.0.4",
-    "@types/node": "^25.6.0",
-    "@typescript-eslint/parser": "^8.59.1",
-    "eslint": "^10.3.0",
-    "eslint-interactive": "^13.0.1",
+    "@types/node": "^25.8.0",
+    "@typescript-eslint/parser": "^8.59.3",
+    "eslint": "^10.4.0",
+    "eslint-interactive": "^14.0.0",
     "eslint-mdx": "^3.7.0",
     "eslint-plugin-astro": "^1.7.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-mdx": "^3.7.0",
-    "jiti": "^2.6.1",
-    "typescript-eslint": "^8.59.1"
+    "jiti": "^2.7.0",
+    "typescript-eslint": "^8.59.3"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "pnpm@11.1.2"
 }
