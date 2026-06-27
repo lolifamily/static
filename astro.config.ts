@@ -1,4 +1,3 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 
 import sitemap from '@astrojs/sitemap';
@@ -6,10 +5,12 @@ import mdx from '@astrojs/mdx';
 import expressiveCode from 'astro-expressive-code';
 import playformCompress from '@playform/compress';
 
-import remarkPangu from './src/plugins/remark-pangu';
-import remarkRemoveCjkBreaks from './src/plugins/remark-remove-cjk-breaks';
+import remarkPangu from './src/plugins/remark-pangu-satteri';
+import remarkRemoveCjkBreaks from './src/plugins/remark-remove-cjk-breaks-satteri';
 
 import { browserslistToTargets } from 'lightningcss';
+
+import { satteri } from '@astrojs/markdown-satteri';
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,7 +19,7 @@ export default defineConfig({
   trailingSlash: 'always',
   output: 'static',
   cacheDir: '.cache',
-  integrations: [expressiveCode(), mdx({ optimize: true }), playformCompress({
+  integrations: [expressiveCode(), mdx(), playformCompress({
     CSS: false,
     HTML: {
       'html-minifier-terser': {
@@ -35,6 +36,7 @@ export default defineConfig({
   })],
   vite: {
     build: {
+      reportCompressedSize: !process.env.CI, // CI 不需要 gzip 大小估算
       minify: 'terser',
       cssMinify: 'lightningcss',
       target: ['chrome99', 'edge99', 'firefox97', 'safari15'],
@@ -48,14 +50,23 @@ export default defineConfig({
     format: 'directory',
   },
   markdown: {
-    remarkPlugins: [remarkPangu, [remarkRemoveCjkBreaks, {
-      includeEmoji: true,
-      includeMathWithPunctuation: true,
-    }]],
-    remarkRehype: {
-      footnoteBackLabel: (idx, reIdx) => `返回引用 ${idx + 1}${reIdx > 1 ? `-${reIdx}` : ''}`,
-      footnoteLabel: '脚注',
-    },
+    processor: satteri({
+      features: {
+        frontmatter: true,
+        gfm: {
+          footnotes: {
+            label: '脚注',
+            // satteri 的 referenceNumber 已是 1-based（remark-rehype 的 idx 是 0-based 需 +1）
+            backLabel: (referenceNumber: number, rerunIndex: number) =>
+              `返回引用 ${referenceNumber}${rerunIndex > 1 ? `-${rerunIndex}` : ''}`,
+          },
+        },
+      },
+      mdastPlugins: [
+        remarkPangu,
+        remarkRemoveCjkBreaks({ includeEmoji: true }),
+      ],
+    }),
   },
   image: {
     layout: 'constrained',
@@ -70,10 +81,5 @@ export default defineConfig({
   experimental: {
     clientPrerender: true,
     contentIntellisense: true,
-    rustCompiler: true,
-    queuedRendering: {
-      enabled: true,
-      contentCache: true,
-    },
   },
 });
